@@ -53,6 +53,8 @@ Incluye sistema de autenticación, valoraciones de usuarios y panel de administr
   article: "Descripción detallada..."
 }
 
+```
+
 3. Envía un Pull Request con los cambios.
 
 ### 3. Mejorar la interfaz o funcionalidades 
