@@ -5,12 +5,12 @@
 ![Firebase](https://img.shields.io/badge/Firebase-Firestore%20%26%20Auth-FFCA28?logo=firebase&logoColor=black&style=flat-square)  
 ![Status](https://img.shields.io/badge/Status-Active-success?style=flat-square)  
 
-**Una aplicación web para explorar, aprender y evaluar herramientas de ciberseguridad.**  
+**Una aplicación web para explorar, aprender y evaluar herramientas de ciberseguridad por categoría.**  
 Incluye sistema de autenticación, valoraciones de usuarios y panel de administración para gestión de categorías y herramientas.
-### *Puedes participar añadiendo herramientas desde el panel de usuario* ###
 
 ---
 ## 🔗 [Enlace a la plataforma!](https://dmrj.github.io/secguide/)  
+### *Puedes participar añadiendo herramientas desde el panel de usuario* ###
 ---
 ## 🚀 Características  
 
