@@ -6,7 +6,8 @@
 ![Status](https://img.shields.io/badge/Status-Active-success?style=flat-square)  
 
 **Una aplicación web para explorar, aprender y evaluar herramientas de ciberseguridad.**  
-Incluye sistema de autenticación, valoraciones de usuarios y panel de administración para gestión de categorías y herramientas.  
+Incluye sistema de autenticación, valoraciones de usuarios y panel de administración para gestión de categorías y herramientas.
+###*Cualquier usuario puede sugerir cualquier herramientas desde el panel de usuario*###
 
 ---
 ## 🔗 [Enlace a la plataforma!](https://dmrj.github.io/secguide/)  
@@ -17,7 +18,7 @@ Incluye sistema de autenticación, valoraciones de usuarios y panel de administr
 - ⭐ **Sistema de valoraciones**: Califica herramientas con estrellas (1-5).  
 - 👤 **Autenticación de usuarios**: Registro e inicio de sesión con Firebase Authentication.  
 - 🛠️ **Panel de administración**: Gestión de categorías y herramientas para usuarios administradores.  
-- 💡 **Sugerencias de usuarios**: Los usuarios pueden proponer nuevas herramientas.  
+- 💡 **Sugerencias de usuarios**: Puedes proponer nuevas herramientas desde el panel de usuario.  
 - 🔄 **Base de datos en tiempo real**: Implementada con Firebase Firestore.  
 
 ---
