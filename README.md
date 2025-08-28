@@ -72,7 +72,7 @@ Incluye sistema de autenticación, valoraciones de usuarios y panel de administr
 secguide/
 │
 ├── index.html
-|
+│
 ```
 ## 🐛 Problemas comunes y soluciones
 
