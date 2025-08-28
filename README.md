@@ -7,7 +7,7 @@
 
 **Una aplicación web para explorar, aprender y evaluar herramientas de ciberseguridad.**  
 Incluye sistema de autenticación, valoraciones de usuarios y panel de administración para gestión de categorías y herramientas.
-###*Cualquier usuario puede sugerir cualquier herramientas desde el panel de usuario*###
+## *Cualquier usuario puede sugerir cualquier herramientas desde el panel de usuario* ##
 
 ---
 ## 🔗 [Enlace a la plataforma!](https://dmrj.github.io/secguide/)  
