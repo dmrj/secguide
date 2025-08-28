@@ -69,14 +69,6 @@ Incluye sistema de autenticación, valoraciones de usuarios y panel de administr
 ### 4. Traducción
 . ¿Hablas otro idioma? ¡Puedes colaborar traduciendo la aplicación!
 
-## 📋 Estructura del proyecto
-
-```
-secguide/
-│
-├── index.html
-│
-```
 ## 🐛 Problemas comunes y soluciones
 
 **Error de configuración de Firebase**
