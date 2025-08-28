@@ -52,3 +52,48 @@ Incluye sistema de autenticación, valoraciones de usuarios y panel de administr
   link: "URL oficial",
   article: "Descripción detallada..."
 }
+
+3. Envía un Pull Request con los cambios.
+
+### 3. Mejorar la interfaz o funcionalidades 
+- Implementar nuevas características.
+- Mejorar el diseño responsive.
+- Optimizar el rendimiento.
+- Añadir tests automatizados.
+
+### 3. Traducción
+. ¿Hablas otro idioma? ¡Puedes colaborar traduciendo la aplicación!
+
+## 📋 Estructura del proyecto
+
+secguide/
+│
+├── index.html
+
+
+## 🐛 Problemas comunes y soluciones
+
+**Error de configuración de Firebase**
+
+- Verifica que los datos de configuración coincidan con tu proyecto Firebase.
+- Asegúrate de habilitar Firestore y Authentication.
+
+**Las valoraciones no se guardan**
+
+- Revisa las reglas de seguridad de Firestore.
+- Deben permitir escritura solo para usuarios autenticados.
+
+**Problemas de autenticación**
+
+- Confirma que el proveedor Email/Contraseña esté habilitado en Firebase Authentication.
+
+## 👥 Autores
+
+Deimian Rojas M - Desarrollo inicial - @dmrj
+
+
+## 🙏 Agradecimientos
+
+- Al equipo de Firebase por la excelente plataforma.
+- A la comunidad de ciberseguridad por sus valiosas contribuciones.
+
