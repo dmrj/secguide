@@ -1008,34 +1008,40 @@
       });
     }
     
-    function loadUserTools() {
-      if (!currentUser) return;
+function loadUserTools() {
+  if (!currentUser) return;
+  
+  // DEBE incluir ambas condiciones: herramientas aprobadas Y las del usuario
+  db.collection("tools")
+    .where("createdBy", "==", currentUser.uid)
+    .get()
+    .then(querySnapshot => {
+      const userToolsList = document.getElementById('userToolsList');
+      userToolsList.innerHTML = '';
       
-      db.collection("tools").where("createdBy", "==", currentUser.uid).get()
-        .then(querySnapshot => {
-          const userToolsList = document.getElementById('userToolsList');
-          userToolsList.innerHTML = '';
-          
-          if (querySnapshot.empty) {
-            userToolsList.innerHTML = '<p>No has sugerido ninguna herramienta todavía.</p>';
-            return;
-          }
-          
-          querySnapshot.forEach(doc => {
-            const tool = doc.data();
-            userToolsList.innerHTML += `
-              <div class="admin-item">
-                <div>
-                  <strong>${tool.name}</strong> - ${tool.brief}
-                  ${!tool.approved ? '<span class="pending-badge">Pendiente de aprobación</span>' : '<span style="color:green;">✓ Aprobada</span>'}
-                </div>
-              </div>`;
-          });
-        })
-        .catch(error => {
-          showError('Error cargando tus herramientas: ' + error.message);
-        });
-    }
+      if (querySnapshot.empty) {
+        userToolsList.innerHTML = '<p>No has sugerido ninguna herramienta todavía.</p>';
+        return;
+      }
+      
+      querySnapshot.forEach(doc => {
+        const tool = doc.data();
+        userToolsList.innerHTML += `
+          <div class="admin-item">
+            <div>
+              <strong>${tool.name}</strong> - ${tool.brief}
+              ${!tool.approved ? 
+                '<span class="pending-badge">Pendiente de aprobación</span>' : 
+                '<span style="color:green;">✓ Aprobada</span>'}
+            </div>
+          </div>`;
+      });
+    })
+    .catch(error => {
+      console.error("Error detallado:", error);
+      showError('Error cargando tus herramientas: ' + error.message);
+    });
+}
     
     // Inicializar la aplicación cuando se carga la página
     window.onload = initApp;
