@@ -10,7 +10,7 @@ Incluye sistema de autenticación, valoraciones de usuarios y panel de administr
 
 ---
 ## 🔗 [Enlace a la plataforma!](https://dmrj.github.io/secguide/)  
-### *Puedes participar añadiendo herramientas y clasificandolas desde el panel de usuario!* ###
+### *¡Puedes participar añadiendo herramientas y clasificandolas desde el panel de usuario!* ###
 ---
 ## 🚀 Características  
 
@@ -31,7 +31,7 @@ Incluye sistema de autenticación, valoraciones de usuarios y panel de administr
 
 ---
 
-## 🎯 Cómo contribuir  
+## 🎯 Otras formas de contribución 
 
 ¡Tu ayuda es bienvenida! Puedes contribuir de varias formas:  
 
