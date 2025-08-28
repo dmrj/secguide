@@ -9,7 +9,7 @@
 Incluye sistema de autenticación, valoraciones de usuarios y panel de administración para gestión de categorías y herramientas.  
 
 ---
-## ![Enlace a la plataforma](https://dmrj.github.io/secguide/)  
+## [Enlace a la plataforma](https://dmrj.github.io/secguide/)  
 ---
 ## 🚀 Características  
 
