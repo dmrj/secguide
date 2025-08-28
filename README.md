@@ -63,16 +63,17 @@ Incluye sistema de autenticación, valoraciones de usuarios y panel de administr
 - Optimizar el rendimiento.
 - Añadir tests automatizados.
 
-### 3. Traducción
+### 4. Traducción
 . ¿Hablas otro idioma? ¡Puedes colaborar traduciendo la aplicación!
 
 ## 📋 Estructura del proyecto
 
+```
 secguide/
 │
 ├── index.html
-
-
+|
+```
 ## 🐛 Problemas comunes y soluciones
 
 **Error de configuración de Firebase**
