@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Herramientas de Ciberseguridad</title>
+  <title>Cybersecurity Tools Hub - SecGuide</title>
   <!-- Firebase App (core Firebase SDK) -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <!-- Firebase Firestore -->
@@ -153,6 +153,13 @@
       background:#ff9800; color:white; padding:3px 8px; border-radius:10px;
       font-size:0.8em; margin-left:10px;
     }
+
+    .loading {
+      text-align: center;
+      color: white;
+      font-size: 1.2em;
+      margin: 20px 0;
+    }
   </style>
 </head>
 <body>
@@ -163,7 +170,7 @@
     </div>
 
     <div class="nav-buttons">
-      <button id="backButton" class="nav-button" onclick="goBack()">← Volver</button>
+      <button id="backButton" class="nav-button" onclick="goBack()" style="display:none;">← Volver</button>
       <button id="homeButton" class="nav-button" onclick="showHome()">🏠 Inicio</button>
       <button id="loginButton" class="nav-button" onclick="showLogin()">🔐 Iniciar Sesión</button>
       <button id="registerButton" class="nav-button" onclick="showRegister()">📝 Registrarse</button>
@@ -175,7 +182,9 @@
     <div id="statusMessage"></div>
 
     <!-- Vista principal -->
-    <div id="categoriesView" class="categories-grid"></div>
+    <div id="categoriesView" class="categories-grid">
+      <div class="loading">Cargando categorías...</div>
+    </div>
     <div id="toolsView" class="tools-grid" style="display:none"></div>
     <div id="toolDetailView" style="display:none"></div>
 
@@ -328,13 +337,13 @@
   <script>
     // Configuración de Firebase
     const firebaseConfig = {
-    apiKey: "AIzaSyDYnkB7glh2xov8IkjELUWiBqXgFQ7oWew",
-    authDomain: "secguide-10.firebaseapp.com",
-    projectId: "secguide-10",
-    storageBucket: "secguide-10.firebasestorage.app",
-    messagingSenderId: "967304372442",
-    appId: "1:967304372442:web:fab0d2a808d31be52ac5e3",
-    measurementId: "G-F14GC9TF82"
+      apiKey: "AIzaSyDYnkB7glh2xov8IkjELUWiBqXgFQ7oWew",
+      authDomain: "secguide-10.firebaseapp.com",
+      projectId: "secguide-10",
+      storageBucket: "secguide-10.firebasestorage.app",
+      messagingSenderId: "967304372442",
+      appId: "1:967304372442:web:fab0d2a808d31be52ac5e3",
+      measurementId: "G-F14GC9TF82"
     };
     
     // Inicializar Firebase
@@ -350,23 +359,24 @@
     
     // Inicializar la aplicación
     function initApp() {
+      // Cargar datos públicos incluso si no hay usuario autenticado
+      loadPublicData();
+      
       // Escuchar cambios de autenticación
       auth.onAuthStateChanged(user => {
         currentUser = user;
         updateUI();
         
         if (user) {
-          loadCategories();
-          loadTools();
+          // Recargar datos para usuarios autenticados
+          loadPublicData();
         }
       });
-      
-      // Cargar datos públicos incluso si no hay usuario autenticado
-      loadPublicData();
     }
     
     // Cargar datos públicos (categorías y herramientas aprobadas)
     function loadPublicData() {
+      // Cargar categorías aprobadas
       db.collection("categories").where("approved", "==", true)
         .get()
         .then(querySnapshot => {
@@ -374,22 +384,22 @@
           querySnapshot.forEach(doc => {
             categories.push({ id: doc.id, ...doc.data() });
           });
-          renderCategories();
+          
+          // Cargar herramientas aprobadas
+          return db.collection("tools").where("approved", "==", true).get();
         })
-        .catch(error => {
-          showError("Error cargando categorías: " + error.message);
-        });
-        
-      db.collection("tools").where("approved", "==", true)
-        .get()
         .then(querySnapshot => {
           tools = [];
           querySnapshot.forEach(doc => {
             tools.push({ id: doc.id, ...doc.data() });
           });
+          
+          // Renderizar categorías con el conteo correcto
+          renderCategories();
         })
         .catch(error => {
-          showError("Error cargando herramientas: " + error.message);
+          console.error("Error cargando datos:", error);
+          showError("Error cargando datos: " + error.message);
         });
     }
     
@@ -415,6 +425,10 @@
             } else {
               adminBtn.style.display = 'none';
             }
+          })
+          .catch(error => {
+            console.error("Error verificando admin:", error);
+            adminBtn.style.display = 'none';
           });
       } else {
         loginBtn.style.display = 'block';
@@ -452,11 +466,13 @@
     function showLogin() {
       hideAllViews();
       document.getElementById('loginView').style.display = 'block';
+      document.getElementById('backButton').style.display = 'none';
     }
     
     function showRegister() {
       hideAllViews();
       document.getElementById('registerView').style.display = 'block';
+      document.getElementById('backButton').style.display = 'none';
     }
     
     function login() {
@@ -513,6 +529,8 @@
       auth.signOut()
         .then(() => {
           showSuccess('Sesión cerrada correctamente');
+          hideAllViews();
+          showHome();
         })
         .catch(error => {
           showError('Error al cerrar sesión: ' + error.message);
@@ -540,8 +558,10 @@
     function goBack() {
       if (document.getElementById('toolDetailView').style.display === 'block') {
         showTools(currentCategory);
-        document.getElementById('toolDetailView').style.display = 'none';
-      } else {
+      } else if (document.getElementById('toolsView').style.display === 'grid') {
+        showHome();
+      } else if (document.getElementById('adminPanelView').style.display === 'block' || 
+                 document.getElementById('userPanelView').style.display === 'block') {
         showHome();
       }
     }
@@ -556,6 +576,7 @@
       }
       
       categoriesView.innerHTML = categories.map(cat => {
+        // Contar herramientas en esta categoría
         const count = tools.filter(t => t.cats && t.cats.includes(cat.id)).length;
         return `
           <div class='category-card' onclick='showTools("${cat.id}")'>
@@ -571,7 +592,7 @@
       currentCategory = catId;
       const category = categories.find(c => c.id === catId);
       
-      document.getElementById('categoriesView').style.display = 'none';
+      hideAllViews();
       document.getElementById('toolsView').style.display = 'grid';
       document.getElementById('backButton').style.display = 'block';
       
@@ -599,8 +620,9 @@
       
       if (!tool) return;
       
-      document.getElementById('toolsView').style.display = 'none';
+      hideAllViews();
       document.getElementById('toolDetailView').style.display = 'block';
+      document.getElementById('backButton').style.display = 'block';
       
       // Obtener rating promedio
       let averageRating = 0;
@@ -690,6 +712,7 @@
     function showAdminPanel() {
       hideAllViews();
       document.getElementById('adminPanelView').style.display = 'block';
+      document.getElementById('backButton').style.display = 'block';
       loadAdminCategories();
       loadAdminTools();
     }
@@ -892,7 +915,7 @@
     }
     
     function deleteCategory(categoryId) {
-      if (!confirm('¿Estás seguro de que quieres eliminar esta categoría?')) return;
+      if (!confirm('¿Estás seguro de que quieres eliminar esta categoría? Esta acción no se puede deshacer.')) return;
       
       db.collection("categories").doc(categoryId).delete()
         .then(() => {
@@ -906,7 +929,7 @@
     }
     
     function deleteTool(toolId) {
-      if (!confirm('¿Estás seguro de que quieres eliminar esta herramienta?')) return;
+      if (!confirm('¿Estás seguro de que quieres eliminar esta herramienta? Esta acción no se puede deshacer.')) return;
       
       db.collection("tools").doc(toolId).delete()
         .then(() => {
@@ -924,6 +947,7 @@
     function showUserPanel() {
       hideAllViews();
       document.getElementById('userPanelView').style.display = 'block';
+      document.getElementById('backButton').style.display = 'block';
       loadUserTools();
     }
     
