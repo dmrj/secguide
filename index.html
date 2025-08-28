@@ -1008,38 +1008,36 @@
       });
     }
     
-function loadUserTools() {
-  if (!currentUser) return;
-  
-  // DEBE incluir ambas condiciones: herramientas aprobadas Y las del usuario
-  db.collection("tools")
-    .where("createdBy", "==", currentUser.uid)
-    .get()
+function loadAdminTools() {
+  db.collection("tools").orderBy("name").get()
     .then(querySnapshot => {
-      const userToolsList = document.getElementById('userToolsList');
-      userToolsList.innerHTML = '';
+      const toolsList = document.getElementById('adminToolsList');
+      toolsList.innerHTML = '<h3>Herramientas Existentes</h3>';
       
       if (querySnapshot.empty) {
-        userToolsList.innerHTML = '<p>No has sugerido ninguna herramienta todavía.</p>';
+        toolsList.innerHTML += '<p>No hay herramientas</p>';
         return;
       }
       
       querySnapshot.forEach(doc => {
         const tool = doc.data();
-        userToolsList.innerHTML += `
+        toolsList.innerHTML += `
           <div class="admin-item">
             <div>
               <strong>${tool.name}</strong> - ${tool.brief}
+              ${!tool.approved ? '<span class="pending-badge">Pendiente</span>' : ''}
+            </div>
+            <div class="admin-item-actions">
               ${!tool.approved ? 
-                '<span class="pending-badge">Pendiente de aprobación</span>' : 
-                '<span style="color:green;">✓ Aprobada</span>'}
+                '<button class="item-action-btn" onclick="approveTool(\'' + doc.id + '\')">Aprobar</button>' : 
+                ''}
+              <button class="item-action-btn delete" onclick="deleteTool('${doc.id}')">Eliminar</button>
             </div>
           </div>`;
       });
     })
     .catch(error => {
-      console.error("Error detallado:", error);
-      showError('Error cargando tus herramientas: ' + error.message);
+      showError('Error cargando herramientas: ' + error.message);
     });
 }
     
