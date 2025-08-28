@@ -11,6 +11,7 @@
   <!-- Firebase Authentication -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
   <style>
+    /* Tus estilos CSS existentes se mantienen igual */
     * { margin:0; padding:0; box-sizing:border-box; }
     body {
       font-family: 'Segoe UI', sans-serif;
@@ -153,6 +154,11 @@
       background:#ff9800; color:white; padding:3px 8px; border-radius:10px;
       font-size:0.8em; margin-left:10px;
     }
+    
+    .rejected-badge {
+      background:#f44336; color:white; padding:3px 8px; border-radius:10px;
+      font-size:0.8em; margin-left:10px;
+    }
 
     .loading {
       text-align: center;
@@ -274,7 +280,7 @@
             <input type="text" id="toolLicense" placeholder="Licencia">
           </div>
           <div class="form-row">
-            <input type="text" id="toolLink" placeholder="Enlace oficial">
+            <input type="text" id="toolLink" placeholder="Enlace oficial</button>
           </div>
           <div class="form-row">
             <textarea id="toolArticle" placeholder="Artículo descriptivo"></textarea>
@@ -399,7 +405,10 @@
         })
         .catch(error => {
           console.error("Error cargando datos:", error);
-          showError("Error cargando datos: " + error.message);
+          // No mostrar error de permisos al usuario general
+          if (!error.message.includes("permissions")) {
+            showError("Error cargando datos: " + error.message);
+          }
         });
     }
     
@@ -418,18 +427,9 @@
         userPanelBtn.style.display = 'block';
         
         // Verificar si es administrador
-        db.collection("users").doc(currentUser.uid).get()
-          .then(doc => {
-            if (doc.exists && doc.data().isAdmin) {
-              adminBtn.style.display = 'block';
-            } else {
-              adminBtn.style.display = 'none';
-            }
-          })
-          .catch(error => {
-            console.error("Error verificando admin:", error);
-            adminBtn.style.display = 'none';
-          });
+        checkAdminStatus().then(isAdmin => {
+          adminBtn.style.display = isAdmin ? 'block' : 'none';
+        });
       } else {
         loginBtn.style.display = 'block';
         registerBtn.style.display = 'block';
@@ -440,6 +440,19 @@
         // Ocultar paneles de admin/usuario si están visibles
         document.getElementById('adminPanelView').style.display = 'none';
         document.getElementById('userPanelView').style.display = 'none';
+      }
+    }
+    
+    // Función para verificar si el usuario es administrador
+    async function checkAdminStatus() {
+      if (!currentUser) return false;
+      
+      try {
+        const userDoc = await db.collection("users").doc(currentUser.uid).get();
+        return userDoc.exists && userDoc.data().isAdmin === true;
+      } catch (error) {
+        console.error("Error verificando admin:", error);
+        return false;
       }
     }
     
@@ -709,7 +722,13 @@
     }
     
     // Panel de administración
-    function showAdminPanel() {
+    async function showAdminPanel() {
+      const isAdmin = await checkAdminStatus();
+      if (!isAdmin) {
+        showError('No tienes permisos de administrador');
+        return;
+      }
+      
       hideAllViews();
       document.getElementById('adminPanelView').style.display = 'block';
       document.getElementById('backButton').style.display = 'block';
@@ -833,7 +852,10 @@
           });
         })
         .catch(error => {
-          showError('Error cargando categorías: ' + error.message);
+          console.error("Error cargando categorías:", error);
+          if (!error.message.includes("permissions")) {
+            showError('Error cargando categorías: ' + error.message);
+          }
         });
     }
     
@@ -857,14 +879,19 @@
                   ${!tool.approved ? '<span class="pending-badge">Pendiente</span>' : ''}
                 </div>
                 <div class="admin-item-actions">
-                  <button class="item-action-btn" onclick="approveTool('${doc.id}')">Aprobar</button>
+                  ${!tool.approved ? 
+                    `<button class="item-action-btn" onclick="approveTool('${doc.id}')">Aprobar</button>` : 
+                    ''}
                   <button class="item-action-btn delete" onclick="deleteTool('${doc.id}')">Eliminar</button>
                 </div>
               </div>`;
           });
         })
         .catch(error => {
-          showError('Error cargando herramientas: ' + error.message);
+          console.error("Error cargando herramientas:", error);
+          if (!error.message.includes("permissions")) {
+            showError('Error cargando herramientas: ' + error.message);
+          }
         });
     }
     
@@ -895,7 +922,10 @@
           });
         })
         .catch(error => {
-          showError('Error cargando herramientas pendientes: ' + error.message);
+          console.error("Error cargando herramientas pendientes:", error);
+          if (!error.message.includes("permissions")) {
+            showError('Error cargando herramientas pendientes: ' + error.message);
+          }
         });
     }
     
@@ -959,7 +989,14 @@
       categorySelect.innerHTML = '<option value="">Selecciona una categoría</option>' +
         categories.map(cat => `<option value="${cat.id}">${cat.name}</option>`).join('');
     }
-    // Añadir esta función antes de la función suggestTool()
+    
+    // Función auxiliar para obtener el nombre de la categoría
+    function getCategoryName(categoryId) {
+      const category = categories.find(cat => cat.id === categoryId);
+      return category ? category.name : 'Sin categoría';
+    }
+    
+    // Cargar herramientas del usuario (incluyendo rechazadas)
     function loadUserTools() {
       if (!currentUser) {
         console.error("No hay usuario autenticado");
@@ -983,13 +1020,21 @@
           querySnapshot.forEach(doc => {
             const tool = doc.data();
             console.log("Herramienta encontrada:", tool.name, "Aprobada:", tool.approved);
+            
+            let statusBadge = '';
+            if (tool.approved === true) {
+              statusBadge = '<span style="color:green; font-weight:bold;">✓ Aprobada</span>';
+            } else if (tool.approved === false && tool.rejected) {
+              statusBadge = '<span class="rejected-badge">❌ Rechazada</span>';
+            } else {
+              statusBadge = '<span class="pending-badge">Pendiente de aprobación</span>';
+            }
+            
             userToolsList.innerHTML += `
               <div class="admin-item">
                 <div>
                   <strong>${tool.name}</strong> - ${tool.brief}
-                  ${!tool.approved ? 
-                    '<span class="pending-badge">Pendiente de aprobación</span>' : 
-                    '<span style="color:green; font-weight:bold;">✓ Aprobada</span>'}
+                  ${statusBadge}
                 </div>
                 <div>
                   <small>Categoría: ${getCategoryName(tool.cats ? tool.cats[0] : '')}</small>
@@ -999,19 +1044,13 @@
         })
         .catch(error => {
           console.error("Error detallado al cargar herramientas:", error);
-          showError('Error cargando tus herramientas: ' + error.message);
+          if (!error.message.includes("permissions")) {
+            showError('Error cargando tus herramientas: ' + error.message);
+          }
         });
     }
-
-    // Función auxiliar para obtener el nombre de la categoría
-    function getCategoryName(categoryId) {
-      const category = categories.find(cat => cat.id === categoryId);
-      return category ? category.name : 'Sin categoría';
-    }
-
         
-        
-    // Y modificar la función suggestTool() para mejorar el manejo de errores
+    // Función para sugerir herramienta
     function suggestTool() {
       const name = document.getElementById('userToolName').value;
       const brief = document.getElementById('userToolBrief').value;
@@ -1037,6 +1076,7 @@
         link: link,
         article: article,
         approved: false,
+        rejected: false,
         createdBy: currentUser.uid,
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
       })
