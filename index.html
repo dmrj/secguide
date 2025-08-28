@@ -959,7 +959,59 @@
       categorySelect.innerHTML = '<option value="">Selecciona una categoría</option>' +
         categories.map(cat => `<option value="${cat.id}">${cat.name}</option>`).join('');
     }
-    
+    // Añadir esta función antes de la función suggestTool()
+    function loadUserTools() {
+      if (!currentUser) {
+        console.error("No hay usuario autenticado");
+        return;
+      }
+      
+      console.log("Cargando herramientas del usuario:", currentUser.uid);
+      
+      db.collection("tools")
+        .where("createdBy", "==", currentUser.uid)
+        .get()
+        .then(querySnapshot => {
+          const userToolsList = document.getElementById('userToolsList');
+          userToolsList.innerHTML = '';
+          
+          if (querySnapshot.empty) {
+            userToolsList.innerHTML = '<p>No has sugerido ninguna herramienta todavía.</p>';
+            return;
+          }
+          
+          querySnapshot.forEach(doc => {
+            const tool = doc.data();
+            console.log("Herramienta encontrada:", tool.name, "Aprobada:", tool.approved);
+            userToolsList.innerHTML += `
+              <div class="admin-item">
+                <div>
+                  <strong>${tool.name}</strong> - ${tool.brief}
+                  ${!tool.approved ? 
+                    '<span class="pending-badge">Pendiente de aprobación</span>' : 
+                    '<span style="color:green; font-weight:bold;">✓ Aprobada</span>'}
+                </div>
+                <div>
+                  <small>Categoría: ${getCategoryName(tool.cats ? tool.cats[0] : '')}</small>
+                </div>
+              </div>`;
+          });
+        })
+        .catch(error => {
+          console.error("Error detallado al cargar herramientas:", error);
+          showError('Error cargando tus herramientas: ' + error.message);
+        });
+    }
+
+    // Función auxiliar para obtener el nombre de la categoría
+    function getCategoryName(categoryId) {
+      const category = categories.find(cat => cat.id === categoryId);
+      return category ? category.name : 'Sin categoría';
+    }
+
+        
+        
+    // Y modificar la función suggestTool() para mejorar el manejo de errores
     function suggestTool() {
       const name = document.getElementById('userToolName').value;
       const brief = document.getElementById('userToolBrief').value;
@@ -989,7 +1041,7 @@
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
       })
       .then(() => {
-        showSuccess('Herramienta sugerida. Espera la aprobación del administrador.');
+        showSuccess('Herramienta sugerida correctamente. Espera la aprobación del administrador.');
         // Limpiar formulario
         document.getElementById('userToolName').value = '';
         document.getElementById('userToolBrief').value = '';
@@ -1001,46 +1053,15 @@
         document.getElementById('userToolArticle').value = '';
         
         document.getElementById('userAddToolForm').style.display = 'none';
+        // Recargar la lista de herramientas del usuario
         loadUserTools();
       })
       .catch(error => {
+        console.error("Error completo:", error);
         showError('Error al sugerir herramienta: ' + error.message);
       });
     }
-    
-function loadAdminTools() {
-  db.collection("tools").orderBy("name").get()
-    .then(querySnapshot => {
-      const toolsList = document.getElementById('adminToolsList');
-      toolsList.innerHTML = '<h3>Herramientas Existentes</h3>';
-      
-      if (querySnapshot.empty) {
-        toolsList.innerHTML += '<p>No hay herramientas</p>';
-        return;
-      }
-      
-      querySnapshot.forEach(doc => {
-        const tool = doc.data();
-        toolsList.innerHTML += `
-          <div class="admin-item">
-            <div>
-              <strong>${tool.name}</strong> - ${tool.brief}
-              ${!tool.approved ? '<span class="pending-badge">Pendiente</span>' : ''}
-            </div>
-            <div class="admin-item-actions">
-              ${!tool.approved ? 
-                '<button class="item-action-btn" onclick="approveTool(\'' + doc.id + '\')">Aprobar</button>' : 
-                ''}
-              <button class="item-action-btn delete" onclick="deleteTool('${doc.id}')">Eliminar</button>
-            </div>
-          </div>`;
-      });
-    })
-    .catch(error => {
-      showError('Error cargando herramientas: ' + error.message);
-    });
-}
-    
+
     // Inicializar la aplicación cuando se carga la página
     window.onload = initApp;
   </script>
