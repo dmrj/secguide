@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,163 +11,9 @@
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
   <!-- Firebase Authentication -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
-  <style>
-      * { margin:0; padding:0; box-sizing:border-box; }
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color:#333;
-      min-height:100vh;
-    }
-    .container { max-width:1200px; margin:auto; padding:20px; }
-    .header { text-align:center; color:white; margin-bottom:40px; }
-    .header h1 { font-size:2.5em; text-shadow:2px 2px 4px rgba(0,0,0,.3); }
-    .header p { font-size:1.2em; opacity:.9; }
-    
-    /* Botones de navegación */
-    .nav-buttons { display:flex; justify-content:center; gap:15px; margin-bottom:20px; }
-    .nav-button {
-      padding:12px 24px; border:2px solid white; border-radius:25px;
-      background:rgba(255,255,255,0.15); color:white; font-size:16px;
-      cursor:pointer; transition:.3s;
-    }
-    .nav-button:hover { background:white; color:#667eea; transform:translateY(-2px); }
-    
-    /* Formularios de autenticación */
-    .auth-form {
-      background:white; border-radius:15px; padding:25px;
-      box-shadow:0 10px 30px rgba(0,0,0,0.2); max-width:400px; margin:0 auto;
-    }
-    .auth-form h2 { text-align:center; margin-bottom:20px; color:#333; }
-    .form-group { margin-bottom:15px; }
-    .form-group label { display:block; margin-bottom:5px; color:#555; }
-    .form-group input {
-      width:100%; padding:10px; border:1px solid #ddd; border-radius:5px;
-      font-size:16px;
-    }
-    .form-submit {
-      width:100%; padding:12px; background:linear-gradient(135deg,#667eea,#764ba2);
-      color:white; border:none; border-radius:5px; font-size:16px; cursor:pointer;
-      transition:.3s;
-    }
-    .form-submit:hover { opacity:0.9; transform:translateY(-2px); }
-    .form-toggle { text-align:center; margin-top:15px; color:#555; }
-    .form-toggle a { color:#667eea; cursor:pointer; }
-    
-    /* Mensajes de estado */
-    .status-message {
-      padding:10px; border-radius:5px; margin-bottom:15px; text-align:center;
-    }
-    .error { background:#ffebee; color:#c62828; }
-    .success { background:#e8f5e9; color:#2e7d32; }
-    
-    /* Tarjetas de categorías y herramientas */
-    .categories-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:25px; }
-    .category-card {
-      background:white; border-radius:15px; padding:25px;
-      box-shadow:0 10px 30px rgba(0,0,0,0.2);
-      cursor:pointer; transition:.3s; position:relative; overflow:hidden;
-    }
-    .category-card::before {
-      content:''; position:absolute; top:0; left:0; right:0; height:4px;
-      background:linear-gradient(90deg,#667eea,#764ba2);
-    }
-    .category-card:hover { transform:translateY(-8px); box-shadow:0 20px 40px rgba(0,0,0,0.3); }
-    .category-card h3 { margin-bottom:12px; font-size:1.3em; color:#333; }
-    .category-card p { color:#555; line-height:1.5; }
-    .category-card .count { margin-top:10px; color:#667eea; font-weight:bold; }
-
-    .tools-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:20px; }
-    .tool-card {
-      background:white; border-radius:12px; padding:20px;
-      box-shadow:0 8px 25px rgba(0,0,0,.15);
-      border-left:4px solid #667eea;
-      cursor:pointer; transition:.3s;
-    }
-    .tool-card:hover { transform:translateY(-5px); border-left-color:#764ba2; box-shadow:0 15px 35px rgba(0,0,0,.25); }
-    .tool-card h4 { margin-bottom:8px; color:#333; }
-    .tool-card .brief-desc { color:#666; margin-bottom:10px; }
-    .tool-card .platform { background:#f0f0f0; padding:4px 8px; border-radius:12px; font-size:0.8em; }
-
-    /* Vista detalle de herramienta */
-    .tool-detail {
-      background:white; border-radius:15px; padding:30px;
-      box-shadow:0 15px 40px rgba(0,0,0,0.25);
-    }
-    .tool-detail h2 { margin-bottom:20px; font-size:2em; border-bottom:3px solid #667eea; padding-bottom:10px; }
-    .detail-section { margin-bottom:20px; }
-    .detail-section h3 { color:#667eea; margin-bottom:8px; }
-    .detail-section p { color:#555; line-height:1.6; }
-    .license-badge { background:#e8f4f8; color:#0066cc; padding:6px 12px; border-radius:15px; font-size:0.85em; display:inline-block; }
-    .visit-link {
-      display:inline-block; background:linear-gradient(135deg,#667eea,#764ba2);
-      color:white; padding:12px 24px; border-radius:25px; text-decoration:none;
-      margin-top:10px; transition:.3s;
-    }
-    .visit-link:hover { transform:translateY(-2px); box-shadow:0 8px 20px rgba(0,0,0,.2); }
-
-    /* Sistema de votación */
-    .rating-info { display:flex; align-items:center; gap:10px; margin-top:10px; }
-    .stars span { font-size:1.5em; cursor:pointer; color:#ccc; }
-    .stars span.active { color:gold; }
-    .avg-rating { font-weight:bold; color:#333; }
-    
-    /* Panel de administración */
-    .admin-panel, .user-panel {
-      background:white; border-radius:15px; padding:25px;
-      box-shadow:0 10px 30px rgba(0,0,0,0.2); margin-bottom:30px;
-    }
-    .admin-panel h2, .user-panel h2 { margin-bottom:20px; color:#333; }
-    .admin-actions { display:flex; gap:15px; margin-bottom:20px; }
-    .admin-action-btn {
-      padding:10px 20px; background:linear-gradient(135deg,#667eea,#764ba2);
-      color:white; border:none; border-radius:5px; cursor:pointer; transition:.3s;
-    }
-    .admin-action-btn:hover { opacity:0.9; }
-    
-    /* Formularios de administración */
-    .admin-form {
-      background:#f9f9f9; padding:20px; border-radius:10px; margin-bottom:20px;
-    }
-    .form-row { display:flex; gap:15px; margin-bottom:15px; }
-    .form-row input, .form-row select, .form-row textarea {
-      flex:1; padding:10px; border:1px solid #ddd; border-radius:5px;
-    }
-    .form-row textarea { min-height:100px; }
-    
-    /* Listas de administración */
-    .admin-list { margin-top:20px; }
-    .admin-item {
-      display:flex; justify-content:space-between; align-items:center;
-      padding:15px; border-bottom:1px solid #eee;
-    }
-    .admin-item:last-child { border-bottom:none; }
-    .admin-item-actions { display:flex; gap:10px; }
-    .item-action-btn {
-      padding:5px 10px; background:#667eea; color:white; border:none;
-      border-radius:3px; cursor:pointer;
-    }
-    .item-action-btn.delete { background:#f44336; }
-    
-    /* Estados pendientes de aprobación */
-    .pending-badge {
-      background:#ff9800; color:white; padding:3px 8px; border-radius:10px;
-      font-size:0.8em; margin-left:10px;
-    }
-    
-    .rejected-badge {
-      background:#f44336; color:white; padding:3px 8px; border-radius:10px;
-      font-size:0.8em; margin-left:10px;
-    }
-
-    .loading {
-      text-align: center;
-      color: white;
-      font-size: 1.2em;
-      margin: 20px 0;
-    }
-  </style>
+  <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
   <div class="container">
     <div class="header">
@@ -179,8 +26,10 @@
       <button id="homeButton" class="nav-button" onclick="showHome()">🏠 Inicio</button>
       <button id="loginButton" class="nav-button" onclick="showLogin()">🔐 Iniciar Sesión</button>
       <button id="registerButton" class="nav-button" onclick="showRegister()">📝 Registrarse</button>
-      <button id="adminButton" class="nav-button" style="display:none;" onclick="showAdminPanel()">⚙️ Administración</button>
-      <button id="userPanelButton" class="nav-button" style="display:none;" onclick="showUserPanel()">👤 Mi Panel</button>
+      <button id="adminButton" class="nav-button" style="display:none;" onclick="showAdminPanel()">⚙️
+        Administración</button>
+      <button id="userPanelButton" class="nav-button" style="display:none;" onclick="showUserPanel()">👤 Mi
+        Panel</button>
       <button id="logoutButton" class="nav-button" style="display:none;" onclick="logout()">🚪 Cerrar Sesión</button>
     </div>
 
@@ -238,13 +87,13 @@
     <div id="adminPanelView" style="display:none;">
       <div class="admin-panel">
         <h2>Panel de Administración</h2>
-        
+
         <div class="admin-actions">
           <button class="admin-action-btn" onclick="showAddCategoryForm()">➕ Añadir Categoría</button>
           <button class="admin-action-btn" onclick="showAddToolForm()">🛠️ Añadir Herramienta</button>
           <button class="admin-action-btn" onclick="loadPendingTools()">⏳ Herramientas Pendientes</button>
         </div>
-        
+
         <div id="addCategoryForm" class="admin-form" style="display:none;">
           <h3>Añadir Nueva Categoría</h3>
           <div class="form-row">
@@ -255,7 +104,7 @@
           </div>
           <button class="form-submit" onclick="addCategory()">Guardar Categoría</button>
         </div>
-        
+
         <div id="addToolForm" class="admin-form" style="display:none;">
           <h3>Añadir Nueva Herramienta</h3>
           <div class="form-row">
@@ -281,12 +130,12 @@
           <div class="form-row">
             <input type="text" id="toolLink" placeholder="Enlace oficial</button>
           </div>
-          <div class="form-row">
+          <div class=" form-row">
             <textarea id="toolArticle" placeholder="Artículo descriptivo"></textarea>
           </div>
           <button class="form-submit" onclick="addTool()">Guardar Herramienta</button>
         </div>
-        
+
         <div id="adminCategoriesList" class="admin-list"></div>
         <div id="adminToolsList" class="admin-list"></div>
         <div id="pendingToolsList" class="admin-list"></div>
@@ -297,11 +146,11 @@
     <div id="userPanelView" style="display:none;">
       <div class="user-panel">
         <h2>Mi Panel de Usuario</h2>
-        
+
         <div class="admin-actions">
           <button class="admin-action-btn" onclick="showUserAddToolForm()">➕ Sugerir Herramienta</button>
         </div>
-        
+
         <div id="userAddToolForm" class="admin-form" style="display:none;">
           <h3>Sugerir Nueva Herramienta</h3>
           <div class="form-row">
@@ -332,7 +181,7 @@
           </div>
           <button class="form-submit" onclick="suggestTool()">Enviar Sugerencia</button>
         </div>
-        
+
         <h3>Mis herramientas sugeridas</h3>
         <div id="userToolsList" class="admin-list"></div>
       </div>
@@ -350,35 +199,35 @@
       appId: "1:967304372442:web:fab0d2a808d31be52ac5e3",
       measurementId: "G-F14GC9TF82"
     };
-    
+
     // Inicializar Firebase
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
     const auth = firebase.auth();
-    
+
     // Variables globales
     let currentUser = null;
     let currentCategory = null;
     let categories = [];
     let tools = [];
-    
+
     // Inicializar la aplicación
     function initApp() {
       // Cargar datos públicos incluso si no hay usuario autenticado
       loadPublicData();
-      
+
       // Escuchar cambios de autenticación
       auth.onAuthStateChanged(user => {
         currentUser = user;
         updateUI();
-        
+
         if (user) {
           // Recargar datos para usuarios autenticados
           loadPublicData();
         }
       });
     }
-    
+
     // Cargar datos públicos (categorías y herramientas aprobadas)
     function loadPublicData() {
       // Cargar categorías aprobadas
@@ -389,7 +238,7 @@
           querySnapshot.forEach(doc => {
             categories.push({ id: doc.id, ...doc.data() });
           });
-          
+
           // Cargar herramientas aprobadas
           return db.collection("tools").where("approved", "==", true).get();
         })
@@ -398,7 +247,7 @@
           querySnapshot.forEach(doc => {
             tools.push({ id: doc.id, ...doc.data() });
           });
-          
+
           // Renderizar categorías con el conteo correcto
           renderCategories();
         })
@@ -410,7 +259,7 @@
           }
         });
     }
-    
+
     // Actualizar la interfaz según el estado de autenticación
     function updateUI() {
       const loginBtn = document.getElementById('loginButton');
@@ -418,13 +267,13 @@
       const logoutBtn = document.getElementById('logoutButton');
       const adminBtn = document.getElementById('adminButton');
       const userPanelBtn = document.getElementById('userPanelButton');
-      
+
       if (currentUser) {
         loginBtn.style.display = 'none';
         registerBtn.style.display = 'none';
         logoutBtn.style.display = 'block';
         userPanelBtn.style.display = 'block';
-        
+
         // Verificar si es administrador
         checkAdminStatus().then(isAdmin => {
           adminBtn.style.display = isAdmin ? 'block' : 'none';
@@ -435,17 +284,17 @@
         logoutBtn.style.display = 'none';
         adminBtn.style.display = 'none';
         userPanelBtn.style.display = 'none';
-        
+
         // Ocultar paneles de admin/usuario si están visibles
         document.getElementById('adminPanelView').style.display = 'none';
         document.getElementById('userPanelView').style.display = 'none';
       }
     }
-    
+
     // Función para verificar si el usuario es administrador
     async function checkAdminStatus() {
       if (!currentUser) return false;
-      
+
       try {
         const userDoc = await db.collection("users").doc(currentUser.uid).get();
         return userDoc.exists && userDoc.data().isAdmin === true;
@@ -454,7 +303,7 @@
         return false;
       }
     }
-    
+
     // Mostrar mensajes de estado
     function showMessage(message, type) {
       const statusEl = document.getElementById('statusMessage');
@@ -465,37 +314,37 @@
         statusEl.className = '';
       }, 5000);
     }
-    
+
     function showError(message) {
       showMessage(message, 'error');
     }
-    
+
     function showSuccess(message) {
       showMessage(message, 'success');
     }
-    
+
     // Funciones de autenticación
     function showLogin() {
       hideAllViews();
       document.getElementById('loginView').style.display = 'block';
       document.getElementById('backButton').style.display = 'none';
     }
-    
+
     function showRegister() {
       hideAllViews();
       document.getElementById('registerView').style.display = 'block';
       document.getElementById('backButton').style.display = 'none';
     }
-    
+
     function login() {
       const email = document.getElementById('loginEmail').value;
       const password = document.getElementById('loginPassword').value;
-      
+
       if (!email || !password) {
         showError('Por favor, completa todos los campos');
         return;
       }
-      
+
       auth.signInWithEmailAndPassword(email, password)
         .then(() => {
           showSuccess('Sesión iniciada correctamente');
@@ -506,17 +355,17 @@
           showError('Error al iniciar sesión: ' + error.message);
         });
     }
-    
+
     function register() {
       const email = document.getElementById('registerEmail').value;
       const password = document.getElementById('registerPassword').value;
       const name = document.getElementById('registerName').value;
-      
+
       if (!email || !password || !name) {
         showError('Por favor, completa todos los campos');
         return;
       }
-      
+
       auth.createUserWithEmailAndPassword(email, password)
         .then(userCredential => {
           // Guardar información adicional del usuario
@@ -536,7 +385,7 @@
           showError('Error al crear la cuenta: ' + error.message);
         });
     }
-    
+
     function logout() {
       auth.signOut()
         .then(() => {
@@ -548,45 +397,45 @@
           showError('Error al cerrar sesión: ' + error.message);
         });
     }
-    
+
     // Funciones de navegación
     function hideAllViews() {
       const views = [
-        'categoriesView', 'toolsView', 'toolDetailView', 
+        'categoriesView', 'toolsView', 'toolDetailView',
         'loginView', 'registerView', 'adminPanelView', 'userPanelView'
       ];
-      
+
       views.forEach(view => {
         document.getElementById(view).style.display = 'none';
       });
     }
-    
+
     function showHome() {
       hideAllViews();
       document.getElementById('categoriesView').style.display = 'grid';
       document.getElementById('backButton').style.display = 'none';
     }
-    
+
     function goBack() {
       if (document.getElementById('toolDetailView').style.display === 'block') {
         showTools(currentCategory);
       } else if (document.getElementById('toolsView').style.display === 'grid') {
         showHome();
-      } else if (document.getElementById('adminPanelView').style.display === 'block' || 
-                 document.getElementById('userPanelView').style.display === 'block') {
+      } else if (document.getElementById('adminPanelView').style.display === 'block' ||
+        document.getElementById('userPanelView').style.display === 'block') {
         showHome();
       }
     }
-    
+
     // Renderizar categorías
     function renderCategories() {
       const categoriesView = document.getElementById('categoriesView');
-      
+
       if (categories.length === 0) {
         categoriesView.innerHTML = '<p style="color:white; text-align:center; grid-column:1/-1;">No hay categorías disponibles</p>';
         return;
       }
-      
+
       categoriesView.innerHTML = categories.map(cat => {
         // Contar herramientas en esta categoría
         const count = tools.filter(t => t.cats && t.cats.includes(cat.id)).length;
@@ -598,18 +447,18 @@
           </div>`;
       }).join('');
     }
-    
+
     // Mostrar herramientas de una categoría
     function showTools(catId) {
       currentCategory = catId;
       const category = categories.find(c => c.id === catId);
-      
+
       hideAllViews();
       document.getElementById('toolsView').style.display = 'grid';
       document.getElementById('backButton').style.display = 'block';
-      
+
       const categoryTools = tools.filter(t => t.cats && t.cats.includes(catId));
-      
+
       if (categoryTools.length === 0) {
         document.getElementById('toolsView').innerHTML = `
           <div style="grid-column:1/-1; text-align:center; color:white;">
@@ -617,7 +466,7 @@
           </div>`;
         return;
       }
-      
+
       document.getElementById('toolsView').innerHTML = categoryTools.map(tool => `
         <div class='tool-card' onclick='showTool("${tool.id}")'>
           <h4>${tool.name} ${!tool.approved ? '<span class="pending-badge">Pendiente</span>' : ''}</h4>
@@ -625,24 +474,24 @@
           <span class='platform'>${tool.platform}</span>
         </div>`).join('');
     }
-    
+
     // Mostrar detalles de una herramienta
     function showTool(toolId) {
       const tool = tools.find(t => t.id === toolId);
-      
+
       if (!tool) return;
-      
+
       hideAllViews();
       document.getElementById('toolDetailView').style.display = 'block';
       document.getElementById('backButton').style.display = 'block';
-      
+
       // Obtener rating promedio
       let averageRating = 0;
       if (tool.ratings && Object.keys(tool.ratings).length > 0) {
         const ratings = Object.values(tool.ratings);
         averageRating = ratings.reduce((sum, rating) => sum + rating, 0) / ratings.length;
       }
-      
+
       document.getElementById('toolDetailView').innerHTML = `
         <div class='tool-detail'>
           <h2>${tool.name}</h2>
@@ -666,24 +515,24 @@
             </div>
           </div>
         </div>`;
-      
+
       // Cargar rating del usuario actual si está autenticado
       if (currentUser && tool.ratings && tool.ratings[currentUser.uid]) {
         highlightStars(tool.id, tool.ratings[currentUser.uid]);
       }
     }
-    
+
     // Calificar una herramienta
     function rateTool(toolId, stars) {
       if (!currentUser) {
         showError('Debes iniciar sesión para calificar herramientas');
         return;
       }
-      
+
       // Actualizar en Firestore
       const updateData = {};
       updateData[`ratings.${currentUser.uid}`] = stars;
-      
+
       db.collection("tools").doc(toolId).update(updateData)
         .then(() => {
           // Actualizar localmente
@@ -694,10 +543,10 @@
             }
             tools[toolIndex].ratings[currentUser.uid] = stars;
           }
-          
+
           highlightStars(toolId, stars);
           showSuccess('¡Gracias por tu calificación!');
-          
+
           // Recargar la vista para actualizar el promedio
           showTool(toolId);
         })
@@ -705,7 +554,7 @@
           showError('Error al calificar: ' + error.message);
         });
     }
-    
+
     // Resaltar estrellas según la calificación
     function highlightStars(toolId, rating) {
       for (let i = 1; i <= 5; i++) {
@@ -719,7 +568,7 @@
         }
       }
     }
-    
+
     // Panel de administración
     async function showAdminPanel() {
       const isAdmin = await checkAdminStatus();
@@ -727,56 +576,56 @@
         showError('No tienes permisos de administrador');
         return;
       }
-      
+
       hideAllViews();
       document.getElementById('adminPanelView').style.display = 'block';
       document.getElementById('backButton').style.display = 'block';
       loadAdminCategories();
       loadAdminTools();
     }
-    
+
     function showAddCategoryForm() {
       document.getElementById('addCategoryForm').style.display = 'block';
       document.getElementById('addToolForm').style.display = 'none';
     }
-    
+
     function showAddToolForm() {
       document.getElementById('addToolForm').style.display = 'block';
       document.getElementById('addCategoryForm').style.display = 'none';
-      
+
       // Cargar categorías en el selector
       const categorySelect = document.getElementById('toolCategory');
       categorySelect.innerHTML = '<option value="">Selecciona una categoría</option>' +
         categories.map(cat => `<option value="${cat.id}">${cat.name}</option>`).join('');
     }
-    
+
     function addCategory() {
       const name = document.getElementById('categoryName').value;
       const desc = document.getElementById('categoryDesc').value;
-      
+
       if (!name || !desc) {
         showError('Por favor, completa todos los campos');
         return;
       }
-      
+
       db.collection("categories").add({
         name: name,
         desc: desc,
         approved: true,
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
       })
-      .then(() => {
-        showSuccess('Categoría añadida correctamente');
-        document.getElementById('categoryName').value = '';
-        document.getElementById('categoryDesc').value = '';
-        loadAdminCategories();
-        loadPublicData(); // Recargar datos públicos
-      })
-      .catch(error => {
-        showError('Error al añadir categoría: ' + error.message);
-      });
+        .then(() => {
+          showSuccess('Categoría añadida correctamente');
+          document.getElementById('categoryName').value = '';
+          document.getElementById('categoryDesc').value = '';
+          loadAdminCategories();
+          loadPublicData(); // Recargar datos públicos
+        })
+        .catch(error => {
+          showError('Error al añadir categoría: ' + error.message);
+        });
     }
-    
+
     function addTool() {
       const name = document.getElementById('toolName').value;
       const brief = document.getElementById('toolBrief').value;
@@ -786,12 +635,12 @@
       const license = document.getElementById('toolLicense').value;
       const link = document.getElementById('toolLink').value;
       const article = document.getElementById('toolArticle').value;
-      
+
       if (!name || !brief || !category || !func || !platform || !license || !link || !article) {
         showError('Por favor, completa todos los campos');
         return;
       }
-      
+
       db.collection("tools").add({
         name: name,
         brief: brief,
@@ -805,37 +654,37 @@
         createdBy: currentUser.uid,
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
       })
-      .then(() => {
-        showSuccess('Herramienta añadida correctamente');
-        // Limpiar formulario
-        document.getElementById('toolName').value = '';
-        document.getElementById('toolBrief').value = '';
-        document.getElementById('toolCategory').value = '';
-        document.getElementById('toolFunc').value = '';
-        document.getElementById('toolPlatform').value = '';
-        document.getElementById('toolLicense').value = '';
-        document.getElementById('toolLink').value = '';
-        document.getElementById('toolArticle').value = '';
-        
-        loadAdminTools();
-        loadPublicData(); // Recargar datos públicos
-      })
-      .catch(error => {
-        showError('Error al añadir herramienta: ' + error.message);
-      });
+        .then(() => {
+          showSuccess('Herramienta añadida correctamente');
+          // Limpiar formulario
+          document.getElementById('toolName').value = '';
+          document.getElementById('toolBrief').value = '';
+          document.getElementById('toolCategory').value = '';
+          document.getElementById('toolFunc').value = '';
+          document.getElementById('toolPlatform').value = '';
+          document.getElementById('toolLicense').value = '';
+          document.getElementById('toolLink').value = '';
+          document.getElementById('toolArticle').value = '';
+
+          loadAdminTools();
+          loadPublicData(); // Recargar datos públicos
+        })
+        .catch(error => {
+          showError('Error al añadir herramienta: ' + error.message);
+        });
     }
-    
+
     function loadAdminCategories() {
       db.collection("categories").orderBy("name").get()
         .then(querySnapshot => {
           const categoriesList = document.getElementById('adminCategoriesList');
           categoriesList.innerHTML = '<h3>Categorías Existentes</h3>';
-          
+
           if (querySnapshot.empty) {
             categoriesList.innerHTML += '<p>No hay categorías</p>';
             return;
           }
-          
+
           querySnapshot.forEach(doc => {
             const category = doc.data();
             categoriesList.innerHTML += `
@@ -857,18 +706,18 @@
           }
         });
     }
-    
+
     function loadAdminTools() {
       db.collection("tools").orderBy("name").get()
         .then(querySnapshot => {
           const toolsList = document.getElementById('adminToolsList');
           toolsList.innerHTML = '<h3>Herramientas Existentes</h3>';
-          
+
           if (querySnapshot.empty) {
             toolsList.innerHTML += '<p>No hay herramientas</p>';
             return;
           }
-          
+
           querySnapshot.forEach(doc => {
             const tool = doc.data();
             toolsList.innerHTML += `
@@ -878,9 +727,9 @@
                   ${!tool.approved ? '<span class="pending-badge">Pendiente</span>' : ''}
                 </div>
                 <div class="admin-item-actions">
-                  ${!tool.approved ? 
-                    `<button class="item-action-btn" onclick="approveTool('${doc.id}')">Aprobar</button>` : 
-                    ''}
+                  ${!tool.approved ?
+                `<button class="item-action-btn" onclick="approveTool('${doc.id}')">Aprobar</button>` :
+                ''}
                   <button class="item-action-btn delete" onclick="deleteTool('${doc.id}')">Eliminar</button>
                 </div>
               </div>`;
@@ -893,18 +742,18 @@
           }
         });
     }
-    
+
     function loadPendingTools() {
       db.collection("tools").where("approved", "==", false).get()
         .then(querySnapshot => {
           const pendingList = document.getElementById('pendingToolsList');
           pendingList.innerHTML = '<h3>Herramientas Pendientes de Aprobación</h3>';
-          
+
           if (querySnapshot.empty) {
             pendingList.innerHTML += '<p>No hay herramientas pendientes</p>';
             return;
           }
-          
+
           querySnapshot.forEach(doc => {
             const tool = doc.data();
             pendingList.innerHTML += `
@@ -927,25 +776,25 @@
           }
         });
     }
-    
+
     function approveTool(toolId) {
       db.collection("tools").doc(toolId).update({
         approved: true
       })
-      .then(() => {
-        showSuccess('Herramienta aprobada correctamente');
-        loadAdminTools();
-        loadPendingTools();
-        loadPublicData();
-      })
-      .catch(error => {
-        showError('Error al aprobar herramienta: ' + error.message);
-      });
+        .then(() => {
+          showSuccess('Herramienta aprobada correctamente');
+          loadAdminTools();
+          loadPendingTools();
+          loadPublicData();
+        })
+        .catch(error => {
+          showError('Error al aprobar herramienta: ' + error.message);
+        });
     }
-    
+
     function deleteCategory(categoryId) {
       if (!confirm('¿Estás seguro de que quieres eliminar esta categoría? Esta acción no se puede deshacer.')) return;
-      
+
       db.collection("categories").doc(categoryId).delete()
         .then(() => {
           showSuccess('Categoría eliminada correctamente');
@@ -956,10 +805,10 @@
           showError('Error al eliminar categoría: ' + error.message);
         });
     }
-    
+
     function deleteTool(toolId) {
       if (!confirm('¿Estás seguro de que quieres eliminar esta herramienta? Esta acción no se puede deshacer.')) return;
-      
+
       db.collection("tools").doc(toolId).delete()
         .then(() => {
           showSuccess('Herramienta eliminada correctamente');
@@ -971,7 +820,7 @@
           showError('Error al eliminar herramienta: ' + error.message);
         });
     }
-    
+
     // Panel de usuario
     function showUserPanel() {
       hideAllViews();
@@ -979,47 +828,47 @@
       document.getElementById('backButton').style.display = 'block';
       loadUserTools();
     }
-    
+
     function showUserAddToolForm() {
       document.getElementById('userAddToolForm').style.display = 'block';
-      
+
       // Cargar categorías en el selector
       const categorySelect = document.getElementById('userToolCategory');
       categorySelect.innerHTML = '<option value="">Selecciona una categoría</option>' +
         categories.map(cat => `<option value="${cat.id}">${cat.name}</option>`).join('');
     }
-    
+
     // Función auxiliar para obtener el nombre de la categoría
     function getCategoryName(categoryId) {
       const category = categories.find(cat => cat.id === categoryId);
       return category ? category.name : 'Sin categoría';
     }
-    
+
     // Cargar herramientas del usuario (incluyendo rechazadas)
     function loadUserTools() {
       if (!currentUser) {
         console.error("No hay usuario autenticado");
         return;
       }
-      
+
       console.log("Cargando herramientas del usuario:", currentUser.uid);
-      
+
       db.collection("tools")
         .where("createdBy", "==", currentUser.uid)
         .get()
         .then(querySnapshot => {
           const userToolsList = document.getElementById('userToolsList');
           userToolsList.innerHTML = '';
-          
+
           if (querySnapshot.empty) {
             userToolsList.innerHTML = '<p>No has sugerido ninguna herramienta todavía.</p>';
             return;
           }
-          
+
           querySnapshot.forEach(doc => {
             const tool = doc.data();
             console.log("Herramienta encontrada:", tool.name, "Aprobada:", tool.approved);
-            
+
             let statusBadge = '';
             if (tool.approved === true) {
               statusBadge = '<span style="color:green; font-weight:bold;">✓ Aprobada</span>';
@@ -1028,7 +877,7 @@
             } else {
               statusBadge = '<span class="pending-badge">Pendiente de aprobación</span>';
             }
-            
+
             userToolsList.innerHTML += `
               <div class="admin-item">
                 <div>
@@ -1048,7 +897,7 @@
           }
         });
     }
-        
+
     // Función para sugerir herramienta
     function suggestTool() {
       const name = document.getElementById('userToolName').value;
@@ -1059,12 +908,12 @@
       const license = document.getElementById('userToolLicense').value;
       const link = document.getElementById('userToolLink').value;
       const article = document.getElementById('userToolArticle').value;
-      
+
       if (!name || !brief || !category || !func || !platform || !license || !link || !article) {
         showError('Por favor, completa todos los campos');
         return;
       }
-      
+
       db.collection("tools").add({
         name: name,
         brief: brief,
@@ -1079,30 +928,31 @@
         createdBy: currentUser.uid,
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
       })
-      .then(() => {
-        showSuccess('Herramienta sugerida correctamente. Espera la aprobación del administrador.');
-        // Limpiar formulario
-        document.getElementById('userToolName').value = '';
-        document.getElementById('userToolBrief').value = '';
-        document.getElementById('userToolCategory').value = '';
-        document.getElementById('userToolFunc').value = '';
-        document.getElementById('userToolPlatform').value = '';
-        document.getElementById('userToolLicense').value = '';
-        document.getElementById('userToolLink').value = '';
-        document.getElementById('userToolArticle').value = '';
-        
-        document.getElementById('userAddToolForm').style.display = 'none';
-        // Recargar la lista de herramientas del usuario
-        loadUserTools();
-      })
-      .catch(error => {
-        console.error("Error completo:", error);
-        showError('Error al sugerir herramienta: ' + error.message);
-      });
+        .then(() => {
+          showSuccess('Herramienta sugerida correctamente. Espera la aprobación del administrador.');
+          // Limpiar formulario
+          document.getElementById('userToolName').value = '';
+          document.getElementById('userToolBrief').value = '';
+          document.getElementById('userToolCategory').value = '';
+          document.getElementById('userToolFunc').value = '';
+          document.getElementById('userToolPlatform').value = '';
+          document.getElementById('userToolLicense').value = '';
+          document.getElementById('userToolLink').value = '';
+          document.getElementById('userToolArticle').value = '';
+
+          document.getElementById('userAddToolForm').style.display = 'none';
+          // Recargar la lista de herramientas del usuario
+          loadUserTools();
+        })
+        .catch(error => {
+          console.error("Error completo:", error);
+          showError('Error al sugerir herramienta: ' + error.message);
+        });
     }
 
     // Inicializar la aplicación cuando se carga la página
     window.onload = initApp;
   </script>
 </body>
+
 </html>
