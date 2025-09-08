@@ -374,8 +374,7 @@ function highlightStars(toolId, rating) {
     }
   }
 }
-function mostrarAdminPanelHtml() {
-
+const mostrarAdminPanelHtml = function () {
 }
 // Panel de administración
 async function showAdminPanel() {
@@ -386,8 +385,7 @@ async function showAdminPanel() {
   }
 
   hideAllViews();
-  document.getElementById('adminPanelView').style.display = 'block';
-  const a = function () {
+  const adminPanelHtml = function () {
     const html = `<h2>Panel de Administración</h2>
 
         <div class="admin-actions">
@@ -441,14 +439,15 @@ async function showAdminPanel() {
         <div id="adminToolsList" class="admin-list"></div>
         <div id="pendingToolsList" class="admin-list"></div>
 `;
-    a()
+    
     const adminContainer = document.getElementById("adminContainer");
     adminContainer.insertAdjacentHTML("beforeend", `
   ${html}
   `)
-    document.getElementById('adminPanelView').style.display = 'block';
-
   }
+  adminPanelHtml();
+  document.getElementById('adminPanelView').style.display = 'block';
+  
   document.getElementById('backButton').style.display = 'block';
   loadAdminCategories();
   loadAdminTools();
