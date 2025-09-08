@@ -20,7 +20,6 @@
       <h1>🔐 Cybersecurity Tools Hub - SecGuide</h1>
       <p>Explora las mejores herramientas y aprende cómo funcionan</p>
     </div>
-
     <div class="nav-buttons">
       <button id="backButton" class="nav-button" onclick="goBack()" style="display:none;">← Volver</button>
       <button id="homeButton" class="nav-button" onclick="showHome()">🏠 Inicio</button>
@@ -83,63 +82,10 @@
     </div>
     <!-- Panel de administración -->
     <div>
-      <button onclick="mostrarAdminPanelHtml()"></button>
+      <button onclick="mostrarAdminPanelHtml()" style="width: 100px; height: 100px;" aria-label="Abrir panel de administración">⚙️ Administración</button>
     </div>
     <div id="adminPanelView" style="display:none;">
-      <div id ="adminContainer" class="admin-panel">
-        <h2>Panel de Administración</h2>
-
-        <div class="admin-actions">
-          <button class="admin-action-btn" onclick="showAddCategoryForm()">➕ Añadir Categoría</button>
-          <button class="admin-action-btn" onclick="showAddToolForm()">🛠️ Añadir Herramienta</button>
-          <button class="admin-action-btn" onclick="loadPendingTools()">⏳ Herramientas Pendientes</button>
-        </div>
-
-        <div id="addCategoryForm" class="admin-form" style="display:none;">
-          <h3>Añadir Nueva Categoría</h3>
-          <div class="form-row">
-            <input type="text" id="categoryName" placeholder="Nombre de la categoría">
-          </div>
-          <div class="form-row">
-            <input type="text" id="categoryDesc" placeholder="Descripción de la categoría">
-          </div>
-          <button class="form-submit" onclick="addCategory()">Guardar Categoría</button>
-        </div>
-
-        <div id="addToolForm" class="admin-form" style="display:none;">
-          <h3>Añadir Nueva Herramienta</h3>
-          <div class="form-row">
-            <input type="text" id="toolName" placeholder="Nombre de la herramienta">
-          </div>
-          <div class="form-row">
-            <input type="text" id="toolBrief" placeholder="Descripción breve">
-          </div>
-          <div class="form-row">
-            <select id="toolCategory">
-              <option value="">Selecciona una categoría</option>
-            </select>
-          </div>
-          <div class="form-row">
-            <input type="text" id="toolFunc" placeholder="Funcionalidades">
-          </div>
-          <div class="form-row">
-            <input type="text" id="toolPlatform" placeholder="Plataformas (Win/Linux/macOS)">
-          </div>
-          <div class="form-row">
-            <input type="text" id="toolLicense" placeholder="Licencia">
-          </div>
-          <div class="form-row">
-            <input type="text" id="toolLink" placeholder="Enlace oficial">
-          </div>
-          <div class=" form-row">
-            <textarea id="toolArticle" placeholder="Artículo descriptivo"></textarea>
-          </div>
-          <button class="form-submit" onclick="addTool()">Guardar Herramienta</button>
-        </div>
-        <div id="adminCategoriesList" class="admin-list"></div>
-        <div id="adminToolsList" class="admin-list"></div>
-        <div id="pendingToolsList" class="admin-list"></div>
-      </div>
+      <div id="adminContainer" class="admin-panel"></div>
     </div>
 
     <!-- Panel de usuario -->
