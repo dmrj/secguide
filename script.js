@@ -375,7 +375,20 @@ function highlightStars(toolId, rating) {
   }
 }
 function mostrarAdminPanelHtml() {
-  const html = `<h2>Panel de Administración</h2>
+
+}
+// Panel de administración
+async function showAdminPanel() {
+  const isAdmin = await checkAdminStatus();
+  if (!isAdmin) {
+    showError('No tienes permisos de administrador');
+    return;
+  }
+
+  hideAllViews();
+  document.getElementById('adminPanelView').style.display = 'block';
+  const a = function () {
+    const html = `<h2>Panel de Administración</h2>
 
         <div class="admin-actions">
           <button class="admin-action-btn" onclick="showAddCategoryForm()">➕ Añadir Categoría</button>
@@ -428,24 +441,14 @@ function mostrarAdminPanelHtml() {
         <div id="adminToolsList" class="admin-list"></div>
         <div id="pendingToolsList" class="admin-list"></div>
 `;
-  const adminContainer = document.getElementById("adminContainer");
-  adminContainer.insertAdjacentHTML("beforeend", `
+    a()
+    const adminContainer = document.getElementById("adminContainer");
+    adminContainer.insertAdjacentHTML("beforeend", `
   ${html}
   `)
-  document.getElementById('adminPanelView').style.display = 'block';
+    document.getElementById('adminPanelView').style.display = 'block';
 
-}
-// Panel de administración
-async function showAdminPanel() {
-  const isAdmin = await checkAdminStatus();
-  if (!isAdmin) {
-    showError('No tienes permisos de administrador');
-    return;
   }
-
-  hideAllViews();
-  document.getElementById('adminPanelView').style.display = 'block';
-  mostrarAdminPanelHtml();
   document.getElementById('backButton').style.display = 'block';
   loadAdminCategories();
   loadAdminTools();
