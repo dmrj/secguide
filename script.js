@@ -374,9 +374,6 @@ function highlightStars(toolId, rating) {
     }
   }
 }
-const mostrarAdminPanelHtml = function () {
-  console.log("hola");
-}
 // Panel de administración
 async function showAdminPanel() {
   const isAdmin = await checkAdminStatus();
@@ -386,7 +383,7 @@ async function showAdminPanel() {
   }
 
   hideAllViews();
-  const adminPanelHtml = function () {
+  function adminPanelHtml () {
     const html = `<h2>Panel de Administración</h2>
 
         <div class="admin-actions">
