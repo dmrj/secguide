@@ -375,6 +375,7 @@ function highlightStars(toolId, rating) {
   }
 }
 const mostrarAdminPanelHtml = function () {
+  console.log("hola");
 }
 // Panel de administración
 async function showAdminPanel() {
