@@ -1,3 +1,7 @@
+function eliminarHtml(id) {
+  const elemento = document.getElementById(id);
+  elemento.innerHTML = ``;
+}
 // Configuración de Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyDYnkB7glh2xov8IkjELUWiBqXgFQ7oWew",
