@@ -224,7 +224,7 @@ function hideAllViews() {
   ];
 
   views.forEach(view => {
-    document.getElementById(view).style.display = 'none';
+    eliminarHtml(view);
   });
 }
 
