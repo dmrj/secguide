@@ -383,8 +383,9 @@ async function showAdminPanel() {
   }
 
   hideAllViews();
-  function adminPanelHtml () {
-    const html = `<h2>Panel de Administración</h2>
+  function adminPanelHtml() {
+    const html = `<div id="adminContainer" class="admin-panel">
+      <h2>Panel de Administración</h2>
 
         <div class="admin-actions">
           <button class="admin-action-btn" onclick="showAddCategoryForm()">➕ Añadir Categoría</button>
@@ -436,8 +437,9 @@ async function showAdminPanel() {
         <div id="adminCategoriesList" class="admin-list"></div>
         <div id="adminToolsList" class="admin-list"></div>
         <div id="pendingToolsList" class="admin-list"></div>
+        </div>
 `;
-    
+
     const adminContainer = document.getElementById("adminContainer");
     adminContainer.insertAdjacentHTML("beforeend", `
   ${html}
@@ -445,7 +447,7 @@ async function showAdminPanel() {
   }
   adminPanelHtml();
   document.getElementById('adminPanelView').style.display = 'block';
-  
+
   document.getElementById('backButton').style.display = 'block';
   loadAdminCategories();
   loadAdminTools();
