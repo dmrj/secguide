@@ -36,7 +36,7 @@ function initApp() {
 
 // Funcion que borra html de elementos
 
-function eliminarHtml(id){
+function eliminarHtml(id) {
   const elemento = document.getElementById(id);
   elemento.innerHTML = ``;
 }
