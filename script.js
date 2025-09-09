@@ -1,7 +1,3 @@
-function eliminarHtml(id) {
-  const elemento = document.getElementById(id);
-  elemento.innerHTML = ``;
-}
 // Configuración de Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyDYnkB7glh2xov8IkjELUWiBqXgFQ7oWew",
@@ -38,12 +34,6 @@ function initApp() {
   });
 }
 
-// Funcion que borra html de elementos
-
-function eliminarHtml(id) {
-  const elemento = document.getElementById(id);
-  elemento.innerHTML = ``;
-}
 
 
 // Cargar datos públicos (categorías y herramientas aprobadas)
