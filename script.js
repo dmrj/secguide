@@ -42,7 +42,6 @@ function eliminarHtml(id){
 }
 
 
-
 // Cargar datos públicos (categorías y herramientas aprobadas)
 function loadPublicData() {
   // Cargar categorías aprobadas
