@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-=======
 // Funcion que borra html de elementos
 
 function eliminarHtml(id) {
@@ -8,7 +6,6 @@ function eliminarHtml(id) {
 }
 // a
 // Configuración de Firebase
->>>>>>> 2395923 (cosillas)
 const firebaseConfig = {
   apiKey: "AIzaSyDYnkB7glh2xov8IkjELUWiBqXgFQ7oWew",
   authDomain: "secguide-10.firebaseapp.com",
