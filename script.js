@@ -34,6 +34,15 @@ function initApp() {
   });
 }
 
+// Funcion que borra html de elementos
+
+function eliminarHtml(id){
+  const elemento = document.getElementById(id);
+  elemento.innerHTML = ``;
+}
+
+
+
 // Cargar datos públicos (categorías y herramientas aprobadas)
 function loadPublicData() {
   // Cargar categorías aprobadas
@@ -447,7 +456,6 @@ async function showAdminPanel() {
   }
   adminPanelHtml();
   document.getElementById('adminPanelView').style.display = 'block';
-
   document.getElementById('backButton').style.display = 'block';
   loadAdminCategories();
   loadAdminTools();
