@@ -41,24 +41,8 @@ Incluye sistema de autenticación, valoraciones de usuarios y panel de administr
 - Incluye capturas de pantalla si es posible.  
 
 ### 2. Añadir nuevas herramientas  
-1. Haz un **Fork** del repositorio.  
-2. Agrega la nueva herramienta siguiendo este formato:  
-
-```javascript
-{
-  name: "Nombre de la herramienta",
-  brief: "Descripción breve",
-  cats: [id_categoria], // Array con IDs de categorías
-  func: "Funcionalidades principales",
-  platform: "Plataformas compatibles",
-  license: "Tipo de licencia",
-  link: "URL oficial",
-  article: "Descripción detallada..."
-}
-
-```
-
-3. Envía un Pull Request con los cambios.
+1. Crea una cuenta.
+2. Agrega la nueva herramienta rellenando el formulario en tu panel de usuario :D.  
 
 ### 3. Mejorar la interfaz o funcionalidades 
 - Implementar nuevas características.
