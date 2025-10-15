@@ -89,6 +89,9 @@ Incluye sistema de autenticación, valoraciones de usuarios y panel de administr
 
 Deimian Rojas M - Desarrollo inicial - @dmrj
 
+## 👥 Colaboradores
+
+Joaquin Machuca M - Desarrollo - @JoakoAM
 
 ## 🙏 Agradecimientos
 
